@@ -61,7 +61,12 @@ def calc_points(start_x, end_x, start_y, end_y, step):
     black_y = np.array([])
     red_x = np.array([])
     red_y = np.array([])
+    interval = (end_x - start_x) / step
+    counter = 0
     for x in myRange(start_x, end_x, step):
+        progress = (counter / interval) * 100
+        print("Progress: " + str(progress) + "%")
+        counter += 1
         for y in myRange(start_y, end_y, step):
             w = complex(x, y)
             if is_out_of_bounds(w):
@@ -111,19 +116,26 @@ def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarit
     for j in range(0, cpu_cores):
         black_x[j], black_y[j], red_x[j], red_y[j] = result[j].get()
 
+    fig, ax = plt.subplots()
+    ax.set_aspect('equal', 'box')
+    ax.set_title('Mandelbrot Menge', fontsize=10)
+    ax.set_xlabel('Reele Zahlen')
+    ax.set_ylabel('Imaginäre Zahlen')
+
     for k in range(0, cpu_cores):
         for p in range(0, clarity):
-            plt.scatter(black_x[k], black_y[k], s=depth, color='black')
-            plt.scatter(red_x[k], red_y[k], s=depth, color='red')
+            ax.scatter(black_x[k], black_y[k], s=depth, color='black')
+            ax.scatter(red_x[k], red_y[k], s=depth, color='red')
 
     pool.close()
     print("Time to calculate: {}".format(time.time() - now))
+    fig.tight_layout()
     plt.show()
 
 
 def almond_bread():
     plt.xlabel('Reele Zahlen')
-    plt.ylabel('ImaginÃ¤re Zahlen')
+    plt.ylabel('Imaginäre Zahlen')
     for x in myRange(-2.5, 2.5, 0.01):
         for y in myRange(-1.5, 1.5, 0.01):
             w = complex(x, y)
@@ -137,4 +149,4 @@ def almond_bread():
 
 
 if __name__ == '__main__':
-    parallel_processing(-2.5, 2.5, -1.5, 1.5, cpu_cores=4, depth=0.01, clarity=8)
+    parallel_processing(-2.5, 2.5, -1.5, 1.5, cpu_cores=4, depth=0.005, clarity=8)
