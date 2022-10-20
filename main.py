@@ -49,37 +49,67 @@ def myRange(start, end, step, round_value=3):
 
 def is_out_of_bounds(cmplx):
     z = complex(0, 0)
+    t = 0
     for i in range(0, 100):
         z = z ** 2 + cmplx
-        if abs(z) > 3:
+        t = i
+        if abs(z) > 100:
             break
-    return abs(z) > 3
+    return abs(z) > 3, t
 
 
-def calc_points(start_x, end_x, start_y, end_y, step):
+def calc_points(start_x, end_x, start_y, end_y, step, round_value):
     black_x = np.array([])
     black_y = np.array([])
     red_x = np.array([])
     red_y = np.array([])
+    navy_x = np.array([])
+    navy_y = np.array([])
+    blue_x = np.array([])
+    blue_y = np.array([])
+    green_x = np.array([])
+    green_y = np.array([])
+    yellow_x = np.array([])
+    yellow_y = np.array([])
+    orange_x = np.array([])
+    orange_y = np.array([])
     interval = (end_x - start_x) / step
     counter = 0
-    for x in myRange(start_x, end_x, step):
+    for x in myRange(start_x, end_x, step, round_value):
         progress = (counter / interval) * 100
         print("Progress: " + str(progress) + "%")
         counter += 1
-        for y in myRange(start_y, end_y, step):
+        for y in myRange(start_y, end_y, step, round_value):
             w = complex(x, y)
-            if is_out_of_bounds(w):
-                red_x = np.append(red_x, x)
-                red_y = np.append(red_y, y)
+            is_out_of_bound, t = is_out_of_bounds(w)
+            if is_out_of_bound:
+                if t <= 16:
+                    navy_x = np.append(navy_x, x)
+                    navy_y = np.append(navy_y, y)
+                elif t <= 32:
+                    blue_x = np.append(blue_x, x)
+                    blue_y = np.append(blue_y, y)
+                elif t <= 48:
+                    green_x = np.append(green_x, x)
+                    green_y = np.append(green_y, y)
+                elif t <= 64:
+                    yellow_x = np.append(yellow_x, x)
+                    yellow_y = np.append(yellow_y, y)
+                elif t <= 80:
+                    orange_x = np.append(orange_x, x)
+                    orange_y = np.append(orange_y, y)
+                else:
+                    red_x = np.append(red_x, x)
+                    red_y = np.append(red_y, y)
             else:
                 black_x = np.append(black_x, x)
                 black_y = np.append(black_y, y)
 
-    return black_x, black_y, red_x, red_y
+    return black_x, black_y, red_x, red_y, navy_x, navy_y, blue_x, blue_y, green_x, green_y, yellow_x, yellow_y, \
+           orange_x, orange_y
 
 
-def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarity):
+def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarity, round_value):
     now = time.time()
     x_length = x_end - x_start
     y_length = y_end - y_start
@@ -98,23 +128,34 @@ def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarit
     black_y = {}
     red_x = {}
     red_y = {}
+    navy_x = {}
+    navy_y = {}
+    blue_x = {}
+    blue_y = {}
+    green_x = {}
+    green_y = {}
+    yellow_x = {}
+    yellow_y = {}
+    orange_x = {}
+    orange_y = {}
     if square:
         i = 0
         for y in range(0, int(math.sqrt(cpu_cores))):
             for x in range(0, int(math.sqrt(cpu_cores))):
                 result[i] = pool.apply_async(calc_points, [x_start + x * x_interval,
-                                                           x_start + (x+1) * x_interval,
+                                                           x_start + (x + 1) * x_interval,
                                                            y_start + y * y_interval,
-                                                           y_start + (y+1) * y_interval, depth])
+                                                           y_start + (y + 1) * y_interval, depth, round_value])
                 i += 1
     else:
         for i in range(0, cpu_cores):
             result[i] = pool.apply_async(calc_points, [x_start + i * x_interval,
                                                        x_start + (i + 1) * x_interval,
                                                        y_start,
-                                                       y_start + y_interval, depth])
+                                                       y_start + y_interval, depth, round_value])
     for j in range(0, cpu_cores):
-        black_x[j], black_y[j], red_x[j], red_y[j] = result[j].get()
+        black_x[j], black_y[j], red_x[j], red_y[j], navy_x[j], navy_y[j], blue_x[j], blue_y[j], green_x[j], green_y[j], \
+            yellow_x[j], yellow_y[j], orange_x[j], orange_y[j] = result[j].get()
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal', 'box')
@@ -123,9 +164,15 @@ def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarit
     ax.set_ylabel('Imaginäre Zahlen')
 
     for k in range(0, cpu_cores):
+        print(black_x[k])
         for p in range(0, clarity):
             ax.scatter(black_x[k], black_y[k], s=depth, color='black')
             ax.scatter(red_x[k], red_y[k], s=depth, color='red')
+            ax.scatter(navy_x[k], navy_y[k], s=depth, color='navy')
+            ax.scatter(blue_x[k], blue_y[k], s=depth, color='lightblue')
+            ax.scatter(green_x[k], green_y[k], s=depth, color='green')
+            ax.scatter(yellow_x[k], yellow_y[k], s=depth, color='hotpink')
+            ax.scatter(orange_x[k], orange_y[k], s=depth, color='yellow')
 
     pool.close()
     print("Time to calculate: {}".format(time.time() - now))
@@ -149,4 +196,4 @@ def almond_bread():
 
 
 if __name__ == '__main__':
-    parallel_processing(-2.5, 2.5, -1.5, 1.5, cpu_cores=4, depth=0.005, clarity=8)
+    parallel_processing(-0.04491, -0.04486, 0.98261, 0.98264, cpu_cores=4, depth=0.0000001, clarity=64, round_value=10)
