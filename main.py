@@ -9,6 +9,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import multiprocessing as mp
+from PIL import Image as im
 
 
 def get_prime_factors(n):
