@@ -5,7 +5,6 @@ import multiprocessing as mp
 
 
 class Mandelbrot:
-
     image_height: int
 
     def __init__(self, image_width: int, image_height: int, cores: int):
@@ -28,7 +27,7 @@ class Mandelbrot:
         result = {}
         for i in range(0, self.cores):
             # print("X: " + str(x_interval - 1), "Y: " + str(((i+1)*y_interval) - 1))
-            subarray = self.array[(i*y_interval):((i+1)*y_interval), 0:x_interval]
+            subarray = self.array[(i * y_interval):((i + 1) * y_interval), 0:x_interval]
             result[i] = pool.apply_async(self.calc_points, [subarray, start_x, start_y + (y_iteration * i * y_interval),
                                                             x_iteration, y_iteration, y_interval, 0])
 
@@ -58,12 +57,17 @@ class Mandelbrot:
                     array[y, x] = color
         return array
 
-    def generate_image(self, start_x: float, end_x: float, start_y: float):
-        width = end_x - start_x
-        height = ((width / 16) * 9)
-        self.generate_array(start_x, end_x, start_y, start_y + height)
+    def generate_image(self, start_x: float, end_x: float, start_y: float, end_y: float = None):
+        if end_y is None:
+            width = end_x - start_x
+            height = ((width / 16) * 9)
+            end_y = start_y + height
+        self.generate_array(start_x, end_x, start_y, end_y)
         data = im.fromarray(self.array)
         data.save('test.jpg')
+
+    def get_image_array(self):
+        return self.array
 
     @staticmethod
     def is_out_of_bounds(cmplx):
@@ -87,4 +91,5 @@ class Mandelbrot:
 
 
 if __name__ == '__main__':
-    Mandelbrot(3840, 2160, 16).generate_image(-8/3, 8/3, -1.5)
+    Mandelbrot(3840, 2160, 16).generate_image(-0.08, 1.05, 0.96)
+    # Mandelbrot(3840, 2160, 16).generate_image(-8 / 3, 8 / 3, -1.5)
