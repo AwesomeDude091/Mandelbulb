@@ -164,7 +164,6 @@ def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarit
     ax.set_ylabel('Imaginäre Zahlen')
 
     for k in range(0, cpu_cores):
-        print(black_x[k])
         for p in range(0, clarity):
             ax.scatter(black_x[k], black_y[k], s=depth, color='black')
             ax.scatter(red_x[k], red_y[k], s=depth, color='red')
@@ -196,4 +195,4 @@ def almond_bread():
 
 
 if __name__ == '__main__':
-    parallel_processing(-0.04491, -0.04486, 0.98261, 0.98264, cpu_cores=4, depth=0.0000001, clarity=64, round_value=10)
+    parallel_processing(-0.3, 0.1, 0.85, 1.1, cpu_cores=16, depth=0.0005, clarity=8, round_value=10)
