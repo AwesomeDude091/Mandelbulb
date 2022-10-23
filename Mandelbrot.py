@@ -16,11 +16,13 @@ class Mandelbrot:
                        'OrangeRed', 'Red', 'Violet']
 
     def generate_array(self, start_x: float, end_x: float, start_y: float, end_y: float):
-        self.array = np.random.randint(255, size=(self.image_height, self.image_width, 3), dtype=np.uint8)
+        self.array = np.zeros(shape=(self.image_height, self.image_width, 3), dtype=np.uint8)
         width = end_x - start_x
         height = end_y - start_y
+        # print(width, height)
         x_iteration = width / self.image_width
         y_iteration = height / self.image_height
+        # print(x_iteration, y_iteration)
         pool = mp.Pool(self.cores)
         x_interval = self.image_width
         y_interval = int(self.image_height / self.cores)
