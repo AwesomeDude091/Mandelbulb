@@ -45,4 +45,4 @@ class MandelVideo:
 
 
 if __name__ == '__main__':
-    MandelVideo(-(8/3), 8/3, -1.5, -0.08, 0, 0.96, fps=30, duration=10, cores=16).generate_video()
+    MandelVideo(-(8/3), 8/3, -1.5, -0.04491, -0.04486, 0.98261, fps=24, duration=60, cores=16).generate_video()

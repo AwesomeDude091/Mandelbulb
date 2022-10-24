@@ -86,5 +86,6 @@ class Mandelbrot:
 
 
 if __name__ == '__main__':
-    Mandelbrot(3840, 2160, 16).generate_image(-0.08, 0, 0.96)
+    Mandelbrot(3840, 2160, 16).generate_image(-0.04491, -0.04486, 0.98261)
+    # Mandelbrot(3840, 2160, 16).generate_image(-0.08, 0, 0.96)
     # Mandelbrot(3840, 2160, 16).generate_image(-8 / 3, 8 / 3, -1.5)
