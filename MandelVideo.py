@@ -1,6 +1,5 @@
+import os
 import cv2
-
-from Mandelbrot import Mandelbrot
 
 
 class MandelVideo:
@@ -36,13 +35,16 @@ class MandelVideo:
             current_left = self.start_left_x + (i * progression_left_x)
             current_right = self.start_right_x + (i * progression_right_x)
             current_bottom = self.start_y + (i * progression_left_y)
-            current_top = current_bottom + ((current_right - current_left)/16)*9
             # print(current_left, current_right, current_bottom, current_top)
-            bread.generate_image(current_left, current_right, current_bottom, current_top)
+            bread.generate_image(current_left, current_right, current_bottom)
             writer.write(cv2.flip(cv2.cvtColor(bread.get_image_array(), cv2.COLOR_RGB2BGR), 0))
 
         writer.release()
 
 
 if __name__ == '__main__':
-    MandelVideo(-(8/3), 8/3, -1.5, -0.04491, -0.04486, 0.98261, fps=24, duration=60, cores=16).generate_video()
+    os.environ['CUDA_PATH'] = 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8'
+    from Mandelbrot import Mandelbrot
+    # Mandelbrot(3840, 2160, 16).generate_image(-0.04491, -0.04486, 0.98261)
+    Mandelbrot(3840, 2160, 16).generate_image(-8 / 3, 8 / 3, -1.5)
+    # MandelVideo(-(8/3), 8/3, -1.5, -0.04491, -0.04486, 0.98261, fps=24, duration=60, cores=16).generate_video()

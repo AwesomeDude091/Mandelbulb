@@ -2,6 +2,7 @@ import collections
 import fractions
 import math
 import time
+from os import getenv, putenv
 
 import matplotlib
 
@@ -156,7 +157,7 @@ def parallel_processing(x_start, x_end, y_start, y_end, cpu_cores, depth, clarit
                                                        y_start + y_interval, depth, round_value])
     for j in range(0, cpu_cores):
         black_x[j], black_y[j], red_x[j], red_y[j], navy_x[j], navy_y[j], blue_x[j], blue_y[j], green_x[j], green_y[j], \
-            yellow_x[j], yellow_y[j], orange_x[j], orange_y[j] = result[j].get()
+        yellow_x[j], yellow_y[j], orange_x[j], orange_y[j] = result[j].get()
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal', 'box')
