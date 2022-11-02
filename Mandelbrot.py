@@ -1,22 +1,25 @@
+import multiprocessing as mp
 import os
 import time
-from os import getenv
 
 import PIL.ImageColor
 import cv2
 import numpy
 import numpy as np
-import multiprocessing as mp
 
 
 class Mandelbrot:
     image_height: int
 
-    def __init__(self, image_width: int, image_height: int, cores: int):
+    def __init__(self, image_width: int, image_height: int, cores: int, max_iterations: int, debug: bool = False,
+                 color_iteration: int = 8):
         self.image_width = image_width
         self.image_height = image_height
         self.cores = cores
         self.array = np.array([])
+        self.color_iteration = color_iteration
+        self.max_iterations = max_iterations
+        self.debug = debug
         self.colors = ['DarkBlue', 'DarkSlateBlue', 'DeepSkyBlue', 'LightGreen', 'Green', 'GreenYellow', 'Orange',
                        'OrangeRed', 'Red', 'Violet']
 
@@ -29,7 +32,8 @@ class Mandelbrot:
         pool = mp.Pool(self.cores)
         x_interval = self.image_width
         y_interval = int(self.image_height / self.cores)
-        """print(start_x, start_y, start_x + (x_iteration * self.image_width), start_y + (y_iteration * self.image_height), self.image_height, 0)
+        """print(start_x, start_y, start_x + (x_iteration * self.image_width), start_y + 
+        (y_iteration * self.image_height), self.image_height, 0)
         self.array = self.calc_points(self.array, start_x, start_y, x_iteration, y_iteration, self.image_height, 0)"""
         result = {}
         for i in range(0, self.cores):
@@ -49,13 +53,14 @@ class Mandelbrot:
     def calc_points(self, array, start_x, start_y, x_iteration, y_iteration, y_max, y_min):
         for x in range(0, self.image_width):
             progress = (x / self.image_width) * 100
-            # print("Progress: " + str(progress) + "%")
+            if self.debug:
+                print("Progress: " + str(progress) + "%")
             real = start_x + (x_iteration * x)
             for y in range(y_min, y_max):
                 imag = start_y + (y_iteration * y)
                 t = self.is_out_of_bounds(complex(real, imag))
                 if t != 0:
-                    colorIndex = int((int(t)/8) % len(self.colors))
+                    colorIndex = int((int(t) / self.color_iteration) % len(self.colors))
                     color = PIL.ImageColor.getrgb(self.colors[colorIndex])
                     array[y, x] = color
                 else:
@@ -93,12 +98,12 @@ class Mandelbrot:
 
     def cuda_points(self, array, start_x, start_y, x_iteration, y_iteration, y_max, y_min):
         import pycuda.driver as cuda
-        import pycuda.autoinit
         import pycuda.gpuarray as gpuarray
         from pycuda.compiler import SourceModule
         if os.system("cl.exe"):
             os.environ[
-                'PATH'] += ';' + r"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\bin\Hostx86\x64"
+                'PATH'] += ';' + r"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\
+                14.33.31629\bin\Hostx86\x64"
         if os.system("cl.exe"):
             raise RuntimeError("cl.exe still not found, path probably incorrect")
         shape = array.shape
@@ -158,24 +163,24 @@ class Mandelbrot:
     def get_image_array(self):
         return self.array
 
-    @staticmethod
-    def is_out_of_bounds(cmplx):
+    def is_out_of_bounds(self, cmplx):
         z = complex(0, 0)
         t = 0
-        for i in range(0, 256):
+        for i in range(0, self.max_iterations):
             z = z ** 2 + cmplx
             t = i
             if abs(z) > 1000:
                 break
-        if abs(z) > 2:
+
+        if abs(z) >= 2:
             return t
         return 0
 
 
 if __name__ == '__main__':
     clock = time.time()
-    Mandelbrot(3840, 2160, 16).generate_gpu_image(-8 / 3, 8 / 3, -1.5)
+    # Mandelbrot(3840, 2160, 16).generate_gpu_image(-8 / 3, 8 / 3, -1.5)
     # Mandelbrot(3840, 2160, 16).generate_image(-0.04491, -0.04486, 0.98261)
     # Mandelbrot(3840, 2160, 16).generate_image(-0.08, 0, 0.96)
-    # Mandelbrot(3840, 2160, 16).generate_image(-8 / 3, 8 / 3, -1.5)
+    Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-8 / 3, 8 / 3, -1.5)
     print("Time to complete: {}".format(time.time() - clock))

@@ -23,10 +23,10 @@ class MandelVideo:
         # print(self.start_left_x, self.start_right_x, self.start_y, self.start_right_y)
         # print(end_left_x, self.end_right_x, end_y, self.end_right_y)
 
-    def generate_video(self):
+    def generate_video(self, color_iteration):
         fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
         writer = cv2.VideoWriter('mandel.mp4', fourcc, self.fps, (3840, 2160))
-        bread = Mandelbrot(3840, 2160, self.cores)
+        bread = Mandelbrot(3840, 2160, self.cores, 256, color_iteration=color_iteration)
         total_frames = (self.fps * self.duration)
         if self.log:
             progression_left_x = (self.end_x - self.start_left_x) / (numpy.log(total_frames))
@@ -56,5 +56,5 @@ class MandelVideo:
 if __name__ == '__main__':
     # Mandelbrot(3840, 2160, 16).generate_image(-0.04491, -0.04486, 0.98261)
     # Mandelbrot(3840, 2160, 16).generate_image(-8 / 3, 8 / 3, -1.5)
-    MandelVideo(-(8/3), 8/3, -1.5, -0.04491, -0.04486, 0.98261, fps=24, duration=30, log=True, cores=16)\
-        .generate_video()
+    MandelVideo(-(8/3), 8/3, -1.5, -0.04491, -0.04486, 0.98261, fps=24, duration=60, log=True, cores=16)\
+        .generate_video(8)
