@@ -182,5 +182,7 @@ if __name__ == '__main__':
     # Mandelbrot(3840, 2160, 16).generate_gpu_image(-8 / 3, 8 / 3, -1.5)
     # Mandelbrot(3840, 2160, 16).generate_image(-0.04491, -0.04486, 0.98261)
     # Mandelbrot(3840, 2160, 16).generate_image(-0.08, 0, 0.96)
-    Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-8 / 3, 8 / 3, -1.5)
+    # Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-8 / 3, 8 / 3, -1.5)
+    Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-1.45, -1.3791666666666664,
+                                                                                  -1.3113715277777778)
     print("Time to complete: {}".format(time.time() - clock))

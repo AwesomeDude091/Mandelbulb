@@ -6,3 +6,5 @@ opencv-python~=4.6.0.66
 pytools~=2022.1.12
 Mako~=1.2.3
 setuptools==65.5.0
+pygame~=2.1.2
+screeninfo~=0.8.1
