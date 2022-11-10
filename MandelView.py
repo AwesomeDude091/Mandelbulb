@@ -1,4 +1,3 @@
-# importing required library
 import pygame
 from PIL import Image
 from screeninfo import get_monitors
@@ -6,7 +5,6 @@ from screeninfo import get_monitors
 from Mandelbrot import Mandelbrot
 
 
-# activate the pygame library .
 class MandelView:
     def __init__(self, width, height, cores, iterations, color_iterations):
         self.width = width
@@ -22,6 +20,7 @@ class MandelView:
         self.window_x_end = 8/3
         self.window_y = -1.5
         self.window_y_end = 1.5
+        self.img = None
 
     def start(self):
         monitor = None
@@ -34,6 +33,7 @@ class MandelView:
         data = brot.get_image_array()
         tempImg = Image.fromarray(data)
         tempImg = tempImg.resize((monitor.width, monitor.height))
+        self.img = tempImg
         pygame.init()
         screen = pygame.display.set_mode((monitor.width, monitor.height), pygame.FULLSCREEN)
         pygame.mouse.set_visible(True)
@@ -51,6 +51,8 @@ class MandelView:
                 elif e.type == pygame.MOUSEBUTTONDOWN:
                     print("Down")
                     if first_click:
+                        screen.blit(self.pilImageToSurface(self.img), (0, 0))
+                        pygame.display.flip()
                         self.start_x, self.start_y = pygame.mouse.get_pos()
                         first_click = False
                         image_ready = False
@@ -68,7 +70,8 @@ class MandelView:
                         image_ready = True
                 elif e.type == pygame.KEYDOWN:
                     if pygame.key.name(e.key) == 'return' and image_ready:
-                        screen.blit(self.pilImageToSurface(self.give_game_image(monitor)), (0, 0))
+                        self.img = self.give_game_image(monitor)
+                        screen.blit(self.pilImageToSurface(self.img), (0, 0))
                         pygame.display.flip()
                         image_ready = False
                     elif pygame.key.name(e.key) == 'q':

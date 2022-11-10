@@ -32,12 +32,8 @@ class Mandelbrot:
         pool = mp.Pool(self.cores)
         x_interval = self.image_width
         y_interval = int(self.image_height / self.cores)
-        """print(start_x, start_y, start_x + (x_iteration * self.image_width), start_y + 
-        (y_iteration * self.image_height), self.image_height, 0)
-        self.array = self.calc_points(self.array, start_x, start_y, x_iteration, y_iteration, self.image_height, 0)"""
         result = {}
         for i in range(0, self.cores):
-            # print("X: " + str(x_interval - 1), "Y: " + str(((i+1)*y_interval) - 1))
             subarray = self.array[(i * y_interval):((i + 1) * y_interval), 0:x_interval]
             result[i] = pool.apply_async(self.calc_points, [subarray, start_x, start_y + (y_iteration * i * y_interval),
                                                             x_iteration, y_iteration, y_interval, 0])
@@ -180,9 +176,9 @@ class Mandelbrot:
 if __name__ == '__main__':
     clock = time.time()
     # Mandelbrot(3840, 2160, 16).generate_gpu_image(-8 / 3, 8 / 3, -1.5)
-    # Mandelbrot(3840, 2160, 16).generate_image(-0.04491, -0.04486, 0.98261)
-    # Mandelbrot(3840, 2160, 16).generate_image(-0.08, 0, 0.96)
-    # Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-8 / 3, 8 / 3, -1.5)
-    Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-1.45, -1.3791666666666664,
-                                                                                  -1.3113715277777778)
+    # Mandelbrot(3840, 2160, 16, debug=True, color_iteration=8).generate_image(-0.04491, -0.04486, 0.98261)
+    # Mandelbrot(3840, 2160, 16, debug=True, color_iteration=8).generate_image(-0.08, 0, 0.96)
+    Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-8 / 3, 8 / 3, -1.5)
+    # Mandelbrot(3840, 2160, 16, 256, debug=True, color_iteration=8).generate_image(-1.45, -1.3791666666666664,
+    #                                                                              -1.3113715277777778)
     print("Time to complete: {}".format(time.time() - clock))

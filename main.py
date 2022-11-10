@@ -197,4 +197,5 @@ def almond_bread():
 
 
 if __name__ == '__main__':
+    # almond_bread()
     parallel_processing(-8/3, 8/3, -1.5, 1.5, cpu_cores=16, depth=0.005, clarity=8, round_value=10)
