@@ -88,7 +88,7 @@ class MandelView:
                          (self.window_y_end - self.window_y)) / self.height) + self.window_y
         real_end_y = ((self.end_y * (self.height / monitor.height) *
                       (self.window_y_end - self.window_y)) / self.height) + self.window_y
-        brot.generate_image(real_start_x, real_end_x, real_start_y)
+        brot.generate_array(real_start_x, real_end_x, real_start_y, real_end_y)
         data = brot.get_image_array()
         tempImg = Image.fromarray(data)
         self.window_x = real_start_x
