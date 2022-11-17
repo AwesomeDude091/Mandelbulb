@@ -1,3 +1,4 @@
+import cv2
 import pygame
 from PIL import Image
 from screeninfo import get_monitors
@@ -23,11 +24,12 @@ class MandelView:
         self.img = None
 
     def start(self):
+        index = 0
         monitor = None
         for m in get_monitors():
             if m.is_primary:
                 monitor = m
-        brot = Mandelbrot(self.width, self.height, self.cores, self.iterations, debug=False,
+        brot = Mandelbrot(self.width, self.height, self.cores, self.iterations, debug=True,
                           color_iteration=self.color_iterations)
         brot.generate_image(-8/3, 8/3, -1.5)
         data = brot.get_image_array()
@@ -40,6 +42,7 @@ class MandelView:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
         pygame.display.set_caption('Mandelbulb')
         screen.blit(self.pilImageToSurface(tempImg), (0, 0))
+        pygame.image.save(screen, str(index) + '.png')
         pygame.display.flip()
         first_click = True
         image_ready = False
@@ -60,8 +63,8 @@ class MandelView:
                         self.end_x, self.end_y = pygame.mouse.get_pos()
                         height = (self.end_x - self.start_x) / (16 / 9)
                         local = (self.end_y + self.start_y) / 2
-                        self.end_y = local + height
-                        self.start_y = local - height
+                        self.end_y = local + height / 2
+                        self.start_y = local - height / 2
                         pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(self.start_x, self.start_y,
                                                                               (self.end_x - self.start_x),
                                                                               (self.end_y - self.start_y)), 2)
@@ -70,12 +73,18 @@ class MandelView:
                         image_ready = True
                 elif e.type == pygame.KEYDOWN:
                     if pygame.key.name(e.key) == 'return' and image_ready:
+                        pygame.image.save(screen, str(index) + '-rect.png')
                         self.img = self.give_game_image(monitor)
                         screen.blit(self.pilImageToSurface(self.img), (0, 0))
                         pygame.display.flip()
+                        index += 1
+                        pygame.image.save(screen, str(index) + '.png')
                         image_ready = False
                     elif pygame.key.name(e.key) == 'q':
                         pygame.quit()
+
+    def set_iterations(self, iterations):
+        self.iterations = iterations
 
     def give_game_image(self, monitor):
         brot = Mandelbrot(self.width, self.height, self.cores, self.iterations, debug=True,
@@ -106,4 +115,4 @@ class MandelView:
 
 
 if __name__ == '__main__':
-    MandelView(3840, 2160, 16, 256, 8).start()
+    MandelView(3840, 2160, 24, 16384, 1).start()
