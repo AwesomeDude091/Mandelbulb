@@ -77,6 +77,22 @@ class Mandelbrot:
         img = cv2.flip(cv2.cvtColor(self.get_image_array(), cv2.COLOR_RGB2BGR), 0)
         cv2.imwrite('test.jpg', img)
 
+    def get_image_array(self):
+        return self.array
+
+    def is_out_of_bounds(self, cmplx):
+        z = complex(0, 0)
+        t = 0
+        for i in range(0, self.max_iterations):
+            z = z ** 2 + cmplx
+            t = i
+            if abs(z) > 1000:
+                break
+
+        if abs(z) >= 2:
+            return t
+        return 0
+
     def generate_gpu_image(self, start_x: float, end_x: float, start_y: float):
         os.environ['CUDA_PATH'] = 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8'
         start_x, end_x, start_y, end_y = self.calc_window(start_x, end_x, start_y)
@@ -155,22 +171,6 @@ class Mandelbrot:
              numpy.float32(x_iteration), numpy.float32(y_iteration), np.int32(y_min), np.int32(y_max),
              np.int32(self.image_width), block=(1024, 1, 1))
         return np.array(fractal.get(), dtype=np.uint8)
-
-    def get_image_array(self):
-        return self.array
-
-    def is_out_of_bounds(self, cmplx):
-        z = complex(0, 0)
-        t = 0
-        for i in range(0, self.max_iterations):
-            z = z ** 2 + cmplx
-            t = i
-            if abs(z) > 1000:
-                break
-
-        if abs(z) >= 2:
-            return t
-        return 0
 
 
 if __name__ == '__main__':
